@@ -8,7 +8,7 @@ setup(
         "gymnasium>=0.26.0",
         "numpy>=1.19.0",
     ],
-    author="RubixRL Team",
+    author="JKRH",
     author_email="j.hancock354@gmail.com",
     description="A Gymnasium-based Reinforcement Learning Environment for Rubik's Cube",
     keywords="reinforcement-learning, gymnasium, rubiks-cube, artificial-intelligence",

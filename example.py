@@ -8,41 +8,37 @@ import rubixRL
 import time
 
 
-def main():
-    """Main function to demonstrate the Rubik's Cube environment."""
+def test_state_type(env, state_type: str, num_steps: int = 3):
+    """
+    Test the environment with a specific state representation.
 
-    print("Creating a 3x3x3 Rubik's Cube environment...")
-    env = gym.make("RubiksCube-v0")
+    Args:
+        env: The Rubik's Cube environment.
+        state_type (str): The type of state representation to use.
+        num_steps (int): Number of steps to take.
+    """
+    print(f"\nTesting with {state_type} state representation:")
+    print(f"Observation space: {env.observation_space}")
 
-    print("\n1. Environment Information:")
-    print(f"Observation Space: {env.observation_space}")
-    print(f"Action Space: {env.action_space}")
-
-    # Reset the environment with scrambling
-    print("\n2. Resetting the environment with scrambling...")
     state, info = env.reset(options={"scramble": True, "scramble_moves": 5})
 
-    print("\n3. Initial state after scrambling:")
-    print(env.render())
+    print(f"\nInitial state shape: {state.shape}")
+    if state_type == "flat":
+        print("Initial state:")
+        print(env.render())
     print(f"Is solved: {info['is_solved']}")
 
-    # Perform a sequence of random actions
-    print("\n4. Taking a sequence of random actions...")
-
     total_reward = 0
-    num_steps = 10
-
     for i in range(num_steps):
-        # Sample a random action
         action = env.action_space.sample()
-
-        # Apply the action
         next_state, reward, terminated, truncated, info = env.step(action)
         total_reward += reward
 
         print(f"\nStep {i+1}, Action: {action}")
-        print(env.render())
-        print(f"Reward: {reward}, Total Reward: {total_reward}")
+        if state_type == "flat":
+            print(env.render())
+        print(f"State shape: {next_state.shape}")
+        print(f"Reward: {reward:.4f}, Total Reward: {total_reward:.4f}")
         print(f"Is solved: {info['is_solved']}")
 
         if terminated:
@@ -53,20 +49,28 @@ def main():
             print("\nMaximum number of steps reached. Episode truncated.")
             break
 
-        # Add a small delay for better visualization
         time.sleep(0.5)
 
-    # Close the environment
-    env.close()
 
-    print("\n5. Creating a 2x2x2 Rubik's Cube environment...")
-    env_2x2 = gym.make("RubiksCube-v0", n=2)
-    state, info = env_2x2.reset(options={"scramble": True, "scramble_moves": 3})
+def main():
+    """Main function to demonstrate the Rubik's Cube environment."""
 
-    print("\n6. Initial state of 2x2x2 cube after scrambling:")
-    print(env_2x2.render())
+    print("Creating a 3x3x3 Rubik's Cube environment...")
 
-    env_2x2.close()
+    # Test with flat state representation
+    env_flat = gym.make("RubiksCube-v0", state_type="flat")
+    test_state_type(env_flat, "flat")
+    env_flat.close()
+
+    # Test with one-hot state representation
+    env_onehot = gym.make("RubiksCube-v0", state_type="onehot")
+    test_state_type(env_onehot, "onehot")
+    env_onehot.close()
+
+    # Test with corner/edge state representation
+    env_corner_edge = gym.make("RubiksCube-v0", state_type="corner_edge")
+    test_state_type(env_corner_edge, "corner_edge")
+    env_corner_edge.close()
 
     print("\nExample completed!")
 
