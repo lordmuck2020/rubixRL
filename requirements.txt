@@ -1,0 +1,5 @@
+gymnasium>=0.26.0
+numpy>=1.19.0
+# Optional dependencies for RL algorithm examples
+# stable-baselines3>=1.5.0  # Uncomment if using Stable Baselines 3
+# ray[rllib]>=2.0.0  # Uncomment if using RLlib 
