@@ -28,6 +28,8 @@ class RubiksCubeEnv(gym.Env):
                         - "flat": Original 6x(n*n) array representation
                         - "onehot": One-hot encoded representation
                         - "corner_edge": Corner and edge orientation representation
+        step_penalty (float): Penalty for each step taken (to encourage faster solutions)
+        truncation_penalty (float): Penalty when episode is truncated due to max steps
     """
 
     # Define the mapping of colours to numbers
@@ -51,6 +53,8 @@ class RubiksCubeEnv(gym.Env):
         reward_type: str = "dense",
         state_type: str = "flat",
         extended_action_space: bool = False,
+        step_penalty: float = 0.1,
+        truncation_penalty: float = 10.0,
     ):
         """
         Initialise the Rubik's Cube environment.
@@ -70,6 +74,8 @@ class RubiksCubeEnv(gym.Env):
                                         and double turns. If True:
                                         - For n=3: 18 actions (6 faces × 3 rotations)
                                         - For n>3: 6 + 6*(n-2) faces × 3 rotations
+            step_penalty (float): Penalty for each step taken (to encourage faster solutions)
+            truncation_penalty (float): Penalty when episode is truncated due to max steps
         """
         self.n = n
         self.max_steps = max_steps
@@ -77,6 +83,8 @@ class RubiksCubeEnv(gym.Env):
         self.reward_type = reward_type
         self.state_type = state_type
         self.extended_action_space = extended_action_space
+        self.step_penalty = step_penalty
+        self.truncation_penalty = truncation_penalty
 
         # Define action space
         if extended_action_space:
@@ -371,15 +379,23 @@ class RubiksCubeEnv(gym.Env):
         # Calculate reward based on the current state and reward type
         reward = self._calculate_reward()
 
+        # Apply step penalty to encourage faster solutions
+        reward -= self.step_penalty
+
         # Determine if episode is terminated or truncated
         terminated = solved
         truncated = self.current_step >= self.max_steps
+
+        # Apply truncation penalty when episode is truncated
+        if truncated:
+            reward -= self.truncation_penalty
 
         info = {
             "is_solved": solved,
             "steps": self.current_step,
             "reward_type": self.reward_type,
             "state_type": self.state_type,
+            "truncated": truncated,
         }
 
         # Return the state in the specified representation

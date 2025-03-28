@@ -247,10 +247,10 @@ next_state, reward, terminated, truncated, info = env_dense.step(action)
 ## Future Improvements
 
 - Complete implementation of all face rotations
-- Alternative state representations (one-hot encoding, corner/edge orientations)
-- Dense reward functions based on distance metrics
+- [x] Alternative state representations (one-hot encoding, corner/edge orientations)
+- [x] Dense reward functions based on distance metrics
 - GPU-accelerated state transitions
-- 3D visualisation options 
+- [x] 3D visualisation options 
 
 ---
 
