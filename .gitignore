@@ -172,3 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# TensorBoard logs
+tensorboard_logs/
+
+# Training results
+models/
+
+
